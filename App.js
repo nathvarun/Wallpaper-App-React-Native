@@ -9,12 +9,8 @@ import {
   Image,
   Animated,
   TouchableWithoutFeedback,
-  TouchableOpacity,
-  CameraRoll,
-  Share
+  TouchableOpacity
 } from 'react-native';
-
-import { Permissions, FileSystem } from 'expo';
 
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
@@ -36,10 +32,6 @@ export default class App extends React.Component {
     this.actionBarY = this.state.scale.interpolate({
       inputRange: [0.9, 1],
       outputRange: [0, -80]
-    });
-    this.borderRadius = this.state.scale.interpolate({
-      inputRange: [0.9, 1],
-      outputRange: [30, 0]
     });
   }
 
@@ -66,29 +58,6 @@ export default class App extends React.Component {
     this.loadWallpapers();
   }
 
-  saveToCameraRoll = async image => {
-    let cameraPermissions = await Permissions.getAsync(Permissions.CAMERA_ROLL);
-    if (cameraPermissions.status !== 'granted') {
-      cameraPermissions = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    }
-
-    if (cameraPermissions.status === 'granted') {
-      FileSystem.downloadAsync(
-        image.urls.regular,
-        FileSystem.documentDirectory + image.id + '.jpg'
-      )
-        .then(({ uri }) => {
-          CameraRoll.saveToCameraRoll(uri);
-          alert('Saved to photos');
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    } else {
-      alert('Requires cameral roll permission');
-    }
-  };
-
   showControls = item => {
     this.setState(
       state => ({
@@ -106,16 +75,6 @@ export default class App extends React.Component {
         }
       }
     );
-  };
-
-  shareWallpaper = async image => {
-    try {
-      await Share.share({
-        message: 'Checkout this wallpaper ' + image.urls.full
-      });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   renderItem = ({ item }) => {
@@ -137,13 +96,8 @@ export default class App extends React.Component {
         </View>
         <TouchableWithoutFeedback onPress={() => this.showControls(item)}>
           <Animated.View style={[{ height, width }, this.scale]}>
-            <Animated.Image
-              style={{
-                flex: 1,
-                height: null,
-                width: null,
-                borderRadius: this.borderRadius
-              }}
+            <Image
+              style={{ flex: 1, height: null, width: null }}
               source={{ uri: item.urls.regular }}
             />
           </Animated.View>
@@ -165,7 +119,7 @@ export default class App extends React.Component {
           >
             <TouchableOpacity
               activeOpacity={0.5}
-              onPress={() => this.loadWallpapers()}
+              onPress={() => alert('load images')}
             >
               <Ionicons name="ios-refresh" color="white" size={40} />
             </TouchableOpacity>
@@ -175,7 +129,7 @@ export default class App extends React.Component {
           >
             <TouchableOpacity
               activeOpacity={0.5}
-              onPress={() => this.shareWallpaper(item)}
+              onPress={() => alert('load images')}
             >
               <Ionicons name="ios-share" color="white" size={40} />
             </TouchableOpacity>
@@ -185,7 +139,7 @@ export default class App extends React.Component {
           >
             <TouchableOpacity
               activeOpacity={0.5}
-              onPress={() => this.saveToCameraRoll(item)}
+              onPress={() => alert('load images')}
             >
               <Ionicons name="ios-save" color="white" size={40} />
             </TouchableOpacity>
